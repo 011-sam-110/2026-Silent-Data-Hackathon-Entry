@@ -24,10 +24,10 @@ def extract_clean_text(file_path):
 # Run the function
 if __name__ == "__main__":
     # Point this to your uploaded file
-    document_text = extract_clean_text("output_apple.md")
+    document_text = extract_clean_text("output_hsbc.md")
     
     # Save the clean output to a new text file for Ilira
-    with open("clean_apple_report.txt", "w", encoding="utf-8") as out_file:
+    with open("clean_hsbc_report.txt", "w", encoding="utf-8") as out_file:
         out_file.write(document_text)
         
-    print("Done! Clean text saved to clean_apple_report.txt")
+    print("Done! Clean text saved to clean_hsbc_report.txt")
