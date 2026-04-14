@@ -1,0 +1,129 @@
+/* ============================================================
+ * chrome.css -- UI chrome: scrollbar, input-zone merge, fade-up
+ * ESG Provenance Auditor
+ *
+ * Thin custom scrollbar, the CSS that visually merges the hero
+ * card with the input zone below it (applied via JS), and the
+ * results fade-up entrance animation.
+ * ============================================================ */
+
+/* ── Results fade-up entrance ──────────────────────────────── */
+.results {
+    animation: fadeUp 0.45s cubic-bezier(.22,.68,0,1.2) both;
+}
+@keyframes fadeUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0);    }
+}
+
+/* ── Custom scrollbar ──────────────────────────────────────── */
+::-webkit-scrollbar       { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: rgba(4,13,31,0.5); }
+::-webkit-scrollbar-thumb { background: rgba(196,166,214,0.22); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(196,166,214,0.44); }
+
+/* ── Hero + input-zone merged card ─────────────────────────── */
+/* Hide the hero's bottom corner brackets — the input zone
+   continues the card, so the bottom brackets belong to it. */
+.hero .corner.bl, .hero .corner.br { display: none !important; }
+
+/* .esg-input-zone is applied by scripts/input_zone.js to the
+   Streamlit container that holds the file uploader and framework
+   selector. It continues the hero's border seamlessly. */
+.esg-input-zone {
+    background: rgba(4, 13, 31, 0.42) !important;
+    border: 1px solid var(--border) !important;
+    border-top: none !important;
+    border-radius: 0 0 20px 20px !important;
+    padding: 1.5rem 1.5rem 3rem !important;
+    margin-bottom: 2rem !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+/* Bottom-left corner bracket */
+.esg-input-zone::before {
+    content: '';
+    position: absolute; bottom: 16px; left: 16px;
+    width: 22px; height: 22px;
+    border-bottom: 1.5px solid var(--accent);
+    border-left: 1.5px solid var(--accent);
+    opacity: 0.55; pointer-events: none; z-index: 2;
+}
+/* Bottom-right corner bracket */
+.esg-input-zone::after {
+    content: '';
+    position: absolute; bottom: 16px; right: 16px;
+    width: 22px; height: 22px;
+    border-bottom: 1.5px solid var(--accent);
+    border-right: 1.5px solid var(--accent);
+    opacity: 0.55; pointer-events: none; z-index: 2;
+}
+
+/* ── Responsive breakpoints ───────────────────────────────── */
+@media (max-width: 768px) {
+    .main .block-container {
+        padding: 1rem 1rem 2rem !important;
+    }
+    .hero {
+        padding: 2.5rem 1.5rem 2rem;
+    }
+    .hero-title {
+        font-size: clamp(1.8rem, 7vw, 2.8rem) !important;
+    }
+    .hero-sub {
+        font-size: 0.92rem;
+        max-width: 100%;
+    }
+    .badge-row {
+        gap: 0.4rem;
+    }
+    .badge {
+        font-size: 0.56rem;
+        padding: 0.22rem 0.6rem;
+    }
+    .esg-input-zone {
+        padding: 1rem 1rem 2rem !important;
+    }
+    .chain-grid {
+        grid-template-columns: 1fr !important;
+        gap: 1rem !important;
+    }
+    .chain-link {
+        width: 100%;
+        justify-content: center;
+    }
+    .audit-tbl {
+        font-size: 0.78rem;
+    }
+    .audit-tbl th, .audit-tbl td {
+        padding: 0.55rem 0.7rem;
+    }
+    .report-bar {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 0.6rem;
+    }
+    .verified-chip {
+        margin-left: 0 !important;
+    }
+    .mc-value {
+        font-size: 2rem;
+    }
+}
+@media (max-width: 480px) {
+    .hero {
+        padding: 2rem 1rem 1.5rem;
+    }
+    .hero-title {
+        font-size: clamp(1.5rem, 8vw, 2rem) !important;
+    }
+    .mc-value {
+        font-size: 1.7rem;
+    }
+    .chain-box {
+        padding: 1.25rem 1rem !important;
+    }
+    .hash-val {
+        font-size: 0.65rem;
+    }
+}

@@ -1,0 +1,193 @@
+/* ============================================================
+ * hero.css -- Hero banner section
+ * ESG Provenance Auditor
+ *
+ * Styles for the full-width hero block at the top of the page:
+ * gradient title, animated badges, corner brackets, scanlines,
+ * and the blinking terminal cursor.
+ * ============================================================ */
+
+/* ── Hero container ────────────────────────────────────────── */
+.hero {
+    text-align: center;
+    padding: 4rem 3rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background: rgba(4, 13, 31, 0.42);
+    border: 1px solid var(--border);
+    border-bottom: none;
+    border-radius: 20px 20px 0 0;
+    margin-bottom: 0;
+    position: relative; overflow: hidden;
+}
+
+/* Top accent line — gradient across the top edge */
+.hero::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 1px;
+    background: linear-gradient(90deg, transparent 5%, var(--accent) 45%, #d4b8e8 55%, transparent 95%);
+    opacity: 0.75;
+    z-index: 2;
+}
+
+/* Radial glow behind title — breathing animation for depth */
+.hero::after {
+    content: '';
+    position: absolute; top: -10%; left: 50%; transform: translateX(-50%);
+    width: 1000px; height: 700px;
+    background: radial-gradient(ellipse, rgba(196,166,214,0.13) 0%, rgba(167,139,191,0.04) 40%, transparent 65%);
+    pointer-events: none;
+    z-index: 0;
+    animation: hero-breathe 8s ease-in-out infinite;
+}
+@keyframes hero-breathe {
+    0%, 100% { opacity: 0.85; transform: translateX(-50%) scale(1); }
+    50%      { opacity: 1;    transform: translateX(-50%) scale(1.06); }
+}
+
+/* ── Corner brackets (decorative) ──────────────────────────── */
+.corner {
+    position: absolute; width: 22px; height: 22px; opacity: 0.55; z-index: 2;
+}
+.corner.tl { top: 16px;    left: 16px;  border-top:    1.5px solid var(--accent); border-left:  1.5px solid var(--accent); }
+.corner.tr { top: 16px;    right: 16px; border-top:    1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+.corner.bl { bottom: 16px; left: 16px;  border-bottom: 1.5px solid var(--accent); border-left:  1.5px solid var(--accent); }
+.corner.br { bottom: 16px; right: 16px; border-bottom: 1.5px solid var(--accent); border-right: 1.5px solid var(--accent); }
+
+/* ── Animated dot-matrix grid ─────────────────────────────── */
+.hero-dotgrid {
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle, rgba(196, 166, 214, 0.09) 1px, transparent 1px);
+    background-size: 28px 28px;
+    -webkit-mask-image: radial-gradient(ellipse 65% 60% at 50% 35%, black 10%, transparent 65%);
+    mask-image: radial-gradient(ellipse 65% 60% at 50% 35%, black 10%, transparent 65%);
+    animation: grid-drift 25s linear infinite;
+    pointer-events: none;
+    z-index: 1;
+}
+@keyframes grid-drift {
+    from { background-position: 0 0; }
+    to   { background-position: 28px 28px; }
+}
+
+/* All hero content sits above the overlays */
+.hero > *:not(.corner):not(.hero-dotgrid) {
+    position: relative; z-index: 3;
+}
+
+/* ── Eyebrow label ─────────────────────────────────────────── */
+.hero-eyebrow {
+    font-family: var(--f-mono) !important;
+    font-size: 0.64rem;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent) !important;
+    margin-bottom: 1.5rem;
+    opacity: 0.80;
+}
+
+/* ── Gradient title with shimmer animation ─────────────────── */
+.hero-title {
+    font-family: var(--f-display) !important;
+    font-size: clamp(2.4rem, 5.5vw, 4rem);
+    font-weight: 800;
+    background: linear-gradient(115deg, #c4a6d6 0%, #d4b8e8 30%, #a78bbf 62%, #c4a6d6 100%);
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.035em;
+    line-height: 1.08;
+    margin-bottom: 1.25rem;
+    animation: shimmer 7s linear infinite;
+    filter: drop-shadow(0 0 35px rgba(196, 166, 214, 0.12));
+}
+@keyframes shimmer {
+    0%   { background-position: 0%   center; }
+    100% { background-position: 200% center; }
+}
+
+/* ── Terminal cursor blink ─────────────────────────────────── */
+.cursor-blink {
+    display: inline-block;
+    width: 2.5px; height: 0.80em;
+    background: var(--accent);
+    vertical-align: middle;
+    margin-left: 5px;
+    border-radius: 1px;
+    animation: cur-blink 1.15s step-end infinite;
+}
+@keyframes cur-blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+}
+
+/* ── Subtitle ──────────────────────────────────────────────── */
+.hero-sub {
+    font-size: 1.05rem;
+    color: var(--text-mid) !important;
+    max-width: 560px;
+    margin: 0 auto;
+    line-height: 1.72;
+    font-weight: 400;
+}
+
+/* ── Badge row with staggered entrance ─────────────────────── */
+.badge-row {
+    display: flex; justify-content: center;
+    gap: 0.55rem; margin-top: 2.2rem; flex-wrap: wrap;
+}
+.badge-row .badge:nth-child(1) { animation: badge-in 0.5s 0.10s both; }
+.badge-row .badge:nth-child(2) { animation: badge-in 0.5s 0.20s both; }
+.badge-row .badge:nth-child(3) { animation: badge-in 0.5s 0.30s both; }
+.badge-row .badge:nth-child(4) { animation: badge-in 0.5s 0.40s both; }
+.badge-row .badge:nth-child(5) { animation: badge-in 0.5s 0.50s both; }
+.badge-row .badge:nth-child(6) { animation: badge-in 0.5s 0.60s both; }
+@keyframes badge-in {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+.badge {
+    font-family: var(--f-mono) !important;
+    padding: 0.26rem 0.82rem;
+    border-radius: 4px;
+    font-size: 0.62rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: all 0.25s ease;
+    cursor: default;
+}
+.b-teal { background:rgba(196,166,214,0.08); border:1px solid rgba(196,166,214,0.28); color:var(--accent)  !important; }
+.b-blue { background:rgba(196,166,214,0.08); border:1px solid rgba(196,166,214,0.28); color:#c4a6d6 !important; }
+.b-purp { background:rgba(196,166,214,0.08); border:1px solid rgba(196,166,214,0.28); color:#c4a6d6 !important; }
+.b-teal:hover { background:rgba(196,166,214,0.15); box-shadow: 0 4px 18px rgba(196,166,214,0.16); transform: translateY(-2px); }
+.b-blue:hover { background:rgba(196,166,214,0.15); box-shadow: 0 4px 18px rgba(196,166,214,0.16); transform: translateY(-2px); }
+.b-purp:hover { background:rgba(196,166,214,0.15); box-shadow: 0 4px 18px rgba(196,166,214,0.16); transform: translateY(-2px); }
+
+/* ── Scroll hint (not currently rendered, reserved) ────────── */
+.scroll-hint {
+    position: absolute; bottom: 2rem; left: 50%; transform: translateX(-50%);
+    display: flex; flex-direction: column; align-items: center; gap: 0.35rem;
+    color: var(--text-lo) !important;
+    font-family: var(--f-mono) !important;
+    font-size: 0.58rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    opacity: 0.55;
+    animation: bob 2.6s ease-in-out infinite;
+    z-index: 3;
+    white-space: nowrap;
+}
+.scroll-arrow {
+    font-size: 1.0rem;
+    color: var(--accent) !important;
+    opacity: 0.75;
+    line-height: 1;
+}
+@keyframes bob {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(6px); }
+}

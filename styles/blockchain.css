@@ -1,0 +1,166 @@
+/* ============================================================
+ * blockchain.css -- Blockchain verification & report chrome
+ * ESG Provenance Auditor
+ *
+ * Styles for the report header bar, verified chip, applied-
+ * standards card, and the blockchain verification box with its
+ * SHA-256 hash display and explorer link.
+ * ============================================================ */
+
+/* ── Report header bar ─────────────────────────────────────── */
+.report-bar {
+    display: flex; align-items: center; gap: .9rem;
+    margin-bottom: 1.5rem;
+    padding: .85rem 1.1rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+.verified-chip {
+    margin-left: auto;
+    background: rgba(34,197,94,0.09);
+    border: 1px solid rgba(34,197,94,0.26);
+    color: #4ade80 !important;
+    padding: .26rem .72rem;
+    border-radius: 4px;
+    font-family: var(--f-mono) !important;
+    font-size: 0.63rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    animation: pulse-v 3s ease-in-out infinite;
+}
+@keyframes pulse-v {
+    0%, 100% { box-shadow: 0 0 0   0 rgba(34,197,94,0.00); }
+    50%       { box-shadow: 0 0 10px 2px rgba(34,197,94,0.16); }
+}
+
+/* ── Applied-standards card (nested inside metrics column) ── */
+.std-card {
+    margin-top: 1rem;
+    padding: .82rem 1rem;
+    background: rgba(6,17,42,0.72);
+    border: 1px solid rgba(196,166,214,0.11);
+    border-radius: 8px;
+}
+.std-item {
+    display: flex; align-items: center; gap: .45rem;
+    padding: .2rem 0;
+    color: var(--text-mid) !important;
+    font-size: .8rem;
+}
+.std-dot {
+    width: 4px; height: 4px;
+    border-radius: 50%;
+    background: var(--accent);
+    flex-shrink: 0;
+}
+
+/* ── Blockchain verification box ───────────────────────────── */
+.chain-box {
+    background:
+        linear-gradient(180deg, rgba(196,166,214,0.04) 0%, rgba(4,13,31,0.6) 100%) padding-box,
+        linear-gradient(135deg, rgba(196,166,214,0.40), rgba(196,166,214,0.22), rgba(196,166,214,0.20), rgba(196,166,214,0.40)) border-box;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    padding: 1.75rem 2rem;
+    position: relative; overflow: hidden;
+}
+/* Top glow bar */
+.chain-box::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, transparent 4%, var(--accent) 40%, #d4b8e8 60%, transparent 96%);
+}
+/* Decorative corner grid */
+.chain-box::after {
+    content: '';
+    position: absolute; bottom: -24px; right: -24px;
+    width: 140px; height: 140px;
+    background:
+        linear-gradient(rgba(196,166,214,0.055) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(196,166,214,0.055) 1px, transparent 1px);
+    background-size: 18px 18px;
+    pointer-events: none;
+    border-radius: 4px;
+}
+.chain-title {
+    display: flex; align-items: center; gap: .6rem;
+    font-family: var(--f-display) !important;
+    font-size: 1.0rem;
+    font-weight: 700;
+    color: var(--accent) !important;
+    margin-bottom: 1.1rem;
+}
+.chain-grid {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1.5rem;
+    align-items: center;
+}
+.hash-val {
+    font-family: var(--f-mono) !important;
+    font-size: .75rem;
+    color: var(--accent) !important;
+    word-break: break-all;
+    background: rgba(0,0,0,.38);
+    padding: .55rem .85rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+    line-height: 1.65;
+}
+.chain-status {
+    margin-top: .8rem;
+    font-size: .83rem;
+    color: var(--text-mid) !important;
+}
+.chain-status strong { color: var(--accent) !important; font-weight: 600; }
+.chain-sub {
+    margin-top: .28rem;
+    font-family: var(--f-mono) !important;
+    font-size: .70rem;
+    color: var(--text-lo) !important;
+}
+.chain-link {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    background: rgba(196,166,214,0.08);
+    border: 1px solid rgba(196,166,214,0.26);
+    color: var(--accent) !important;
+    padding: .55rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none !important;
+    font-family: var(--f-display) !important;
+    font-size: .82rem;
+    font-weight: 600;
+    transition: all 0.16s ease;
+    white-space: nowrap;
+}
+.chain-link:hover {
+    background: rgba(196,166,214,0.15);
+    box-shadow: 0 4px 18px rgba(196,166,214,0.20);
+    transform: translateY(-1px);
+}
+
+/* ── Blockchain status pulse ──────────────────────────────── */
+.chain-pulse {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--pass);
+    vertical-align: middle;
+    position: relative;
+}
+.chain-pulse::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(34, 197, 94, 0.3);
+    animation: pulse-ring 2s ease-out infinite;
+}
+@keyframes pulse-ring {
+    0%   { transform: scale(1); opacity: 1; }
+    100% { transform: scale(2.2); opacity: 0; }
+}

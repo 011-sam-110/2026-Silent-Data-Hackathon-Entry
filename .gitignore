@@ -1,0 +1,9 @@
+# Secrets
+.env
+
+# Python
+__pycache__/
+*.pyc
+
+# Streamlit hard-linked video (generated at runtime)
+static/bg-video.mp4

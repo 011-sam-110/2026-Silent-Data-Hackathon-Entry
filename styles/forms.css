@@ -1,0 +1,89 @@
+/* ============================================================
+ * forms.css -- Form controls & interactive elements
+ * ESG Provenance Auditor
+ *
+ * Styles for the file uploader, multiselect dropdown, primary
+ * action button, section labels, and dividers.
+ * ============================================================ */
+
+/* ── Dividers ──────────────────────────────────────────────── */
+hr { border-color: rgba(196,166,214,0.09) !important; margin: 1.75rem 0 !important; }
+
+/* ── Section labels (small monospace headings) ─────────────── */
+.slabel {
+    font-family: var(--f-mono) !important;
+    font-size: 0.60rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.17em;
+    color: var(--accent) !important;
+    margin-bottom: 0.35rem;
+    display: block;
+}
+
+/* ── File uploader ─────────────────────────────────────────── */
+[data-testid="stFileUploader"] {
+    background: var(--surface) !important;
+    border: 1px dashed rgba(196,166,214,0.24) !important;
+    border-radius: 10px !important;
+    transition: border-color 0.2s;
+}
+[data-testid="stFileUploader"]:focus-within,
+[data-testid="stFileUploader"]:hover {
+    border-color: rgba(196,166,214,0.50) !important;
+}
+[data-testid="stFileUploader"] section {
+    background: transparent !important;
+    border: none !important;
+}
+
+/* ── Multiselect ───────────────────────────────────────────── */
+[data-testid="stMultiSelect"] > div > div {
+    background: var(--surface) !important;
+    border-color: rgba(196,166,214,0.20) !important;
+}
+[data-testid="stMultiSelect"] span[data-baseweb="tag"] {
+    background: rgba(196,166,214,0.11) !important;
+    color: var(--accent) !important;
+    border: 1px solid rgba(196,166,214,0.28) !important;
+    border-radius: 4px !important;
+    font-size: 0.76rem !important;
+}
+
+/* ── Primary button ────────────────────────────────────────── */
+[data-testid="stButton"] > button[kind="primary"] {
+    background: transparent !important;
+    border: 1.5px solid #d4a0c8 !important;
+    color: #d4a0c8 !important;
+    font-family: var(--f-display) !important;
+    font-weight: 700 !important;
+    font-size: 0.90rem !important;
+    letter-spacing: 0.03em !important;
+    padding: 0.65rem 1.4rem !important;
+    border-radius: 8px !important;
+    box-shadow: 0 4px 22px var(--accent-glow) !important;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    position: relative !important;
+    overflow: hidden !important;
+}
+[data-testid="stButton"] > button[kind="primary"]::after {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+    background-size: 250% 100%;
+    background-position: 100% 0;
+    border-radius: 8px;
+    pointer-events: none;
+    transition: background-position 0.55s ease;
+}
+[data-testid="stButton"] > button[kind="primary"]:hover::after {
+    background-position: -50% 0;
+}
+[data-testid="stButton"] > button[kind="primary"]:hover {
+    transform: translateY(-2px) scale(1.02) !important;
+    box-shadow: 0 0 30px rgba(196,166,214,0.30), 0 8px 30px rgba(196,166,214,0.20), 0 0 80px rgba(196,166,214,0.10) !important;
+}
+[data-testid="stButton"] > button[kind="primary"]:active {
+    transform: translateY(0) scale(0.97) !important;
+}

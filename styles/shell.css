@@ -1,0 +1,60 @@
+/* ============================================================
+ * shell.css -- Streamlit shell overrides & base typography
+ * ESG Provenance Auditor
+ *
+ * Makes Streamlit's default containers transparent so the
+ * background video shows through, and sets the base font
+ * families for the entire page.
+ * ============================================================ */
+
+/* ── Background video (injected by bg_video.js) ────────────── */
+#esg-bg {
+    position: fixed; inset: 0; z-index: 0; overflow: hidden;
+}
+#esg-vid {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    opacity: 0.35;
+    filter: saturate(0.6) brightness(0.75);
+}
+#esg-veil {
+    position: absolute; inset: 0;
+    background: linear-gradient(
+        150deg,
+        rgba(4, 13, 31, 0.45) 0%,
+        rgba(4, 13, 31, 0.32) 55%,
+        rgba(2, 10, 28, 0.50) 100%
+    );
+}
+
+/* ── Streamlit root containers — force transparent ─────────── */
+#root,
+.stApp,
+[data-testid="stAppViewContainer"],
+[data-testid="stAppViewContainer"] > .main {
+    background: transparent !important;
+    position: relative;
+    z-index: 1;
+}
+[data-testid="stHeader"] {
+    background: rgba(4, 13, 31, 0.80) !important;
+    border-bottom: 1px solid var(--border) !important;
+    backdrop-filter: blur(14px);
+}
+.main .block-container {
+    background: transparent !important;
+    padding: 1.5rem 2.5rem 3rem !important;
+    max-width: 1400px !important;
+}
+
+/* ── Base typography ───────────────────────────────────────── */
+body, p, span, label, div, li, td, th, input, select, textarea, button {
+    font-family: var(--f-body);
+}
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--f-display) !important;
+    color: var(--text-hi) !important;
+    letter-spacing: -0.025em;
+}
+p, label, span { color: var(--text-mid); }
+code, pre, kbd  { font-family: var(--f-mono) !important; }
