@@ -19,6 +19,7 @@ import time
 import streamlit as st
 
 import config
+from ai_analyst import analyze_with_ai
 from compliance_engine import analyze_banking_compliance
 from helpers import extract_pdf_text
 
@@ -185,10 +186,19 @@ def render_results(
             badge = config.RULE_STATUS_BADGES.get(
                 rule["status"], rule["status"]
             )
+            w = rule.get("weight", 0)
+            max_w = rule.get("max_weight", 0)
+            if w > 0:
+                weight_html = f'<span style="color:var(--fail);font-weight:700;">+{w}</span>'
+            elif max_w > 0:
+                weight_html = f'<span style="color:var(--text-lo);">+{max_w}</span>'
+            else:
+                weight_html = f'<span style="color:var(--text-lo);">—</span>'
             rows_html += (
                 f'<tr style="{stripe}">'
                 f"<td>{name}</td>"
                 f'<td style="text-align:center;">{badge}</td>'
+                f'<td style="text-align:center;">{weight_html}</td>'
                 f"<td>{rule['evidence']}</td>"
                 f"</tr>"
             )
@@ -201,6 +211,7 @@ def render_results(
                     <tr>
                         <th>Rule</th>
                         <th style="text-align:center;">Status</th>
+                        <th style="text-align:center;">Weight</th>
                         <th>Evidence</th>
                     </tr>
                 </thead>
@@ -210,6 +221,28 @@ def render_results(
             """,
             unsafe_allow_html=True,
         )
+
+    # ── AI Risk Analysis ─────────────────────────────────────────
+    with st.spinner(
+        "Claude is analyzing the document\u2026 generating risk narrative\u2026"
+    ):
+        ai_response = analyze_with_ai(pdf_text, result)
+
+    if ai_response:
+        st.markdown("<hr>", unsafe_allow_html=True)
+        st.markdown(
+            """
+            <div class="ai-section stagger-5">
+                <span class="slabel"
+                      style="display:inline-flex;align-items:center;gap:.4rem;">
+                    <span style="font-size:.85rem;">&#129302;</span>
+                    Claude AI Risk Analysis
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        st.markdown(ai_response)
 
     # ── Markov chain analysis (collapsible) ───────────────────────
     with st.expander("\U0001f4ca Markov Chain Analysis"):

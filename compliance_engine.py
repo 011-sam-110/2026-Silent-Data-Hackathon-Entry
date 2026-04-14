@@ -249,10 +249,16 @@ def _make_snippet(raw_text: str, text: str, match: str | None) -> str:
 
 
 def _add_rule(
-    rules: list[dict[str, str]], rule: str, failed: bool, evidence: str
+    rules: list[dict[str, str]], rule: str, failed: bool, evidence: str, weight: int = 0
 ) -> None:
     rules.append(
-        {"rule": rule, "status": "fail" if failed else "pass", "evidence": evidence}
+        {
+            "rule": rule,
+            "status": "fail" if failed else "pass",
+            "evidence": evidence,
+            "weight": weight if failed else 0,
+            "max_weight": weight,
+        }
     )
 
 
@@ -632,6 +638,7 @@ def analyze_banking_compliance(
             if detected_amount is not None
             else "No reliable amount detected in transaction text."
         ),
+        weight=18,
     )
 
     if new_recipient_term:
@@ -650,7 +657,7 @@ def analyze_banking_compliance(
     else:
         recipient_evidence = "No clear recipient detected in transaction text."
 
-    _add_rule(rules, "unknown_or_new_recipient", recipient_out_of_pattern, recipient_evidence)
+    _add_rule(rules, "unknown_or_new_recipient", recipient_out_of_pattern, recipient_evidence, weight=14)
 
     _add_rule(
         rules,
@@ -661,6 +668,7 @@ def analyze_banking_compliance(
             if detected_country
             else "No destination country detected in transaction text."
         ),
+        weight=18,
     )
 
     _add_rule(
@@ -672,6 +680,7 @@ def analyze_banking_compliance(
             if medium_risk_country_hit
             else "No medium-risk country detected in transaction text."
         ),
+        weight=8,
     )
 
     if vague_details_flag:
@@ -687,7 +696,7 @@ def analyze_banking_compliance(
             else raw_text[:140]
         )
 
-    _add_rule(rules, "vague_or_missing_details", vague_details_flag, vague_evidence)
+    _add_rule(rules, "vague_or_missing_details", vague_details_flag, vague_evidence, weight=8)
 
     _add_rule(
         rules,
@@ -698,6 +707,7 @@ def analyze_banking_compliance(
             if urgency_flag
             else "No urgency or pressure language detected."
         ),
+        weight=12,
     )
 
     _add_rule(
@@ -709,6 +719,7 @@ def analyze_banking_compliance(
             if signature_fail
             else "Signature matches the specimen."
         ),
+        weight=20,
     )
 
     _add_rule(
@@ -720,6 +731,7 @@ def analyze_banking_compliance(
             if detected_amount is not None and average_amount is not None
             else "Insufficient average transaction data for behavioral comparison."
         ),
+        weight=18 if strong_amount_deviation else 12,
     )
 
     _add_rule(
@@ -736,6 +748,7 @@ def analyze_banking_compliance(
             if detected_country
             else "No destination country available for behavioral comparison."
         ),
+        weight=10,
     )
 
     _add_rule(
@@ -752,6 +765,7 @@ def analyze_banking_compliance(
             if detected_recipient
             else "No recipient available for behavioral comparison."
         ),
+        weight=0,
     )
 
     # --- Exit-risk classification --------------------------------------------
@@ -833,10 +847,10 @@ def analyze_banking_compliance(
 
     overall_risk: str
     final_decision: str
-    if signature_fail or exit_risk == "high" or high_risk_country_hit or risk_score >= 75:
+    if risk_score > 45:
         overall_risk = "high"
         final_decision = "reject"
-    elif risk_score >= 35 or is_anomalous or medium_risk_country_hit or exit_risk == "medium":
+    elif risk_score > 20:
         overall_risk = "medium"
         final_decision = "review"
     else:
