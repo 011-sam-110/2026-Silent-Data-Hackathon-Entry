@@ -3,7 +3,8 @@ components/results.py -- Audit results display
 ESG Provenance Auditor
 
 Renders everything that appears after the user clicks "Run AI Audit":
-  - Loading spinner
+  - Real PDF parsing via LiteParse + parser.py
+  - Parsed text saved to parsed_reports/ and offered for download
   - Report header with company name and verified chip
   - Key metrics (left column)
   - SASB compliance breakdown table (right column)
@@ -11,11 +12,107 @@ Renders everything that appears after the user clicks "Run AI Audit":
 """
 
 import hashlib
+import json
+import logging
+import subprocess
+import tempfile
 import time
+from pathlib import Path
 
 import streamlit as st
 
 import config
+from parser import extract_clean_text
+
+_ROOT = Path(__file__).resolve().parent.parent
+_REPORTS_DIR = _ROOT / "parsed_reports"
+_OUTPUT_DIR = _ROOT / "output"
+
+# ── Logging setup ─────────────────────────────────────────────────
+_OUTPUT_DIR.mkdir(exist_ok=True)
+
+logger = logging.getLogger("esg_auditor")
+if not logger.handlers:
+    logger.setLevel(logging.DEBUG)
+    fh = logging.FileHandler(_OUTPUT_DIR / "app.log", encoding="utf-8")
+    fh.setFormatter(logging.Formatter(
+        "%(asctime)s | %(levelname)-7s | %(message)s",
+        datefmt="%Y-%m-%d %H:%M:%S",
+    ))
+    logger.addHandler(fh)
+
+
+def _parse_pdf(uploaded_file) -> tuple[str, int, Path]:
+    """Run LiteParse on the uploaded PDF and return clean text.
+
+    Returns:
+        (text, page_count, output_path)
+    """
+    _REPORTS_DIR.mkdir(exist_ok=True)
+    file_size = uploaded_file.size
+    logger.info("PDF upload received: %s (%d bytes)", uploaded_file.name, file_size)
+
+    content = uploaded_file.read()
+    uploaded_file.seek(0)  # reset so other code can re-read if needed
+
+    tmp_in = tempfile.NamedTemporaryFile(suffix=".pdf", delete=False)
+    tmp_out_path = tmp_in.name + ".json"
+    try:
+        tmp_in.write(content)
+        tmp_in.close()
+        logger.debug("Temp PDF written to %s", tmp_in.name)
+
+        logger.info("Starting LiteParse...")
+        t0 = time.perf_counter()
+        result = subprocess.run(
+            [
+                "liteparse", "parse",
+                "--format", "json",
+                "-q",
+                "-o", tmp_out_path,
+                tmp_in.name,
+            ],
+            capture_output=True,
+            text=True,
+            timeout=120,
+        )
+        elapsed = time.perf_counter() - t0
+
+        if result.returncode != 0:
+            logger.error("LiteParse failed (exit %d): %s", result.returncode, result.stderr.strip())
+            raise RuntimeError(f"LiteParse failed: {result.stderr.strip()}")
+
+        logger.info("LiteParse finished in %.2fs", elapsed)
+
+        out_path = Path(tmp_out_path)
+        if not out_path.exists():
+            logger.error("LiteParse produced no output file")
+            raise RuntimeError("LiteParse produced no output.")
+
+        with open(out_path, "r", encoding="utf-8") as f:
+            liteparse_data = json.load(f)
+        logger.debug("LiteParse JSON loaded (%d bytes)", out_path.stat().st_size)
+
+        logger.info("Extracting clean text...")
+        text, page_count = extract_clean_text(liteparse_data)
+        logger.info("Extracted %d pages (%d chars)", page_count, len(text))
+
+        # Save to parsed_reports/
+        stem = uploaded_file.name.rsplit(".", 1)[0]
+        report_path = _REPORTS_DIR / f"{stem}_parsed.txt"
+        report_path.write_text(text, encoding="utf-8")
+        logger.info("Parsed text saved to %s", report_path)
+
+        return text, page_count, report_path
+
+    except Exception:
+        logger.exception("Error during PDF parsing")
+        raise
+
+    finally:
+        Path(tmp_in.name).unlink(missing_ok=True)
+        Path(tmp_out_path).unlink(missing_ok=True)
+        logger.debug("Temp files cleaned up")
 
 
 def render_results(uploaded_file, standards: list[str]) -> None:
@@ -25,12 +122,24 @@ def render_results(uploaded_file, standards: list[str]) -> None:
         uploaded_file: The Streamlit UploadedFile from the file uploader.
         standards:     List of selected framework strings.
     """
-    # ── Simulated agent processing ────────────────────────────────
-    with st.spinner(
-        "Agent analyzing PDF structure\u2026 extracting ESG metrics\u2026 "
-        "verifying SASB compliance\u2026"
-    ):
-        time.sleep(3)
+    # ── Real PDF parsing via LiteParse ────────────────────────────
+    with st.spinner("Parsing PDF with LiteParse\u2026"):
+        try:
+            text, page_count, report_path = _parse_pdf(uploaded_file)
+        except Exception as e:
+            st.error(f"PDF parsing failed: {e}")
+            return
+
+    # ── Success message + download ────────────────────────────────
+    st.success(
+        f"Parsed {page_count} pages \u2192 saved to `{report_path.relative_to(_ROOT)}`"
+    )
+    st.download_button(
+        label="\u2b07 Download parsed text",
+        data=text,
+        file_name=report_path.name,
+        mime="text/plain",
+    )
 
     company = (
         uploaded_file.name.rsplit(".", 1)[0]
