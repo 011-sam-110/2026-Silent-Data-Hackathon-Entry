@@ -224,7 +224,7 @@ def render_results(
 
     # ── AI Risk Analysis ─────────────────────────────────────────
     with st.spinner(
-        "Claude is analyzing the document\u2026 generating risk narrative\u2026"
+        "Gemini is analyzing the document\u2026 generating risk narrative\u2026"
     ):
         ai_response = analyze_with_ai(pdf_text, result)
 
@@ -236,7 +236,7 @@ def render_results(
                 <span class="slabel"
                       style="display:inline-flex;align-items:center;gap:.4rem;">
                     <span style="font-size:.85rem;">&#129302;</span>
-                    Claude AI Risk Analysis
+                    Gemini AI Risk Analysis
                 </span>
             </div>
             """,
@@ -278,7 +278,7 @@ def render_results(
     audit_hash = hashlib.sha256(
         json.dumps(result, sort_keys=True, default=str).encode()
     ).hexdigest()
-    stds_joined = ", ".join(standards) if standards else "SASB Standards"
+    stds_joined = ", ".join(standards) if standards else "AML / KYC"
 
     st.markdown(
         f"""
@@ -291,7 +291,7 @@ def render_results(
                     <rect x="3" y="11" width="18" height="11" rx="2"/>
                     <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
-                <span class="chain-pulse"></span> Blockchain Verification Layer
+                <span class="chain-pulse"></span> Integrity Verification Layer (SHA-256)
             </div>
             <div class="chain-grid">
                 <div>
@@ -299,16 +299,16 @@ def render_results(
                         Audit Hash (SHA-256)</span>
                     <div class="hash-val">{audit_hash}</div>
                     <div class="chain-status">
-                        Status: <strong>Anchored to Silent Data
-                        (Applied Blockchain L2)</strong>
+                        Status: <strong>SHA-256 hash computed locally
+                        (on-chain anchoring planned)</strong>
                     </div>
                     <div class="chain-sub">
                         Standards applied: {stds_joined}</div>
                 </div>
                 <div>
-                    <a href="#" class="chain-link">
-                        \U0001f517 View on Explorer
-                    </a>
+                    <span class="chain-link" style="opacity:.55;cursor:default;">
+                        \U0001f517 Explorer (coming soon)
+                    </span>
                 </div>
             </div>
         </div>

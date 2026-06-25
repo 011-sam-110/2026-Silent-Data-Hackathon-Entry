@@ -1,6 +1,6 @@
 """
 config.py -- Application constants and mock data
-ESG Provenance Auditor
+AI Banking Compliance Auditor
 
 Pure data module with no Streamlit imports. Houses page configuration,
 framework options, and the hardcoded audit rows used in the demo.
@@ -12,7 +12,7 @@ framework options, and the hardcoded audit rows used in the demo.
 # call in the app entry point.
 # -----------------------------------------------------------------------
 PAGE_CONFIG = dict(
-    page_title="ESG Provenance Auditor",
+    page_title="AI Banking Compliance Auditor",
     page_icon="\U0001f6e1\ufe0f",          # shield emoji
     layout="wide",
     initial_sidebar_state="collapsed",
@@ -32,13 +32,13 @@ VIDEO_DST = "static/bg-video.mp4"
 # Choices shown in the multiselect widget.
 # -----------------------------------------------------------------------
 FRAMEWORK_OPTIONS = [
-    "UN Sustainable Development Goals (SDGs)",
-    "SASB Standards",
-    "TCFD Recommendations",
-    "GRI Standards",
-    "Custom 'Green Token' Criteria",
+    "AML / KYC",
+    "Basel III / IV",
+    "MiFID II",
+    "PSD2",
+    "High-risk country watchlist",
 ]
-DEFAULT_FRAMEWORK = ["SASB Standards"]
+DEFAULT_FRAMEWORK = ["AML / KYC"]
 
 # -----------------------------------------------------------------------
 # COMPLIANCE ENGINE -- display config

@@ -76,6 +76,6 @@ if run_audit and uploaded_file is not None:
     render_results(uploaded_file, standards, signature_match, client_profile)
 elif run_audit:
     st.error(
-        "\u26a0\ufe0f  Please upload a PDF sustainability report "
+        "\u26a0\ufe0f  Please upload a PDF banking document or transaction report "
         "before running the audit."
     )

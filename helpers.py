@@ -1,6 +1,6 @@
 """
 helpers.py -- Asset-loading utilities
-ESG Provenance Auditor
+AI Banking Compliance Auditor
 
 Provides load_css() and load_js() for injecting external CSS and JS
 files into the Streamlit page. All paths are resolved relative to

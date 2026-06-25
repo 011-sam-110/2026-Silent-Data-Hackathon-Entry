@@ -16,18 +16,18 @@ The auditor accepts a PDF (wire transfer memo, payment instruction, annual/susta
 | **Markov credit model** | Estimates 3-step default probability across four credit states (GOOD → NORMAL → RISKY → DEFAULT) |
 | **Gemini AI analyst** | Generates a professional risk narrative — flags the engine may miss, plus actionable recommendations |
 
-The final verdict is one of three decisions: **Approve**, **Manual Review**, or **Reject**, displayed alongside a full audit trail anchored to the Silent Data blockchain layer (SHA-256).
+The final verdict is one of three decisions: **Approve**, **Manual Review**, or **Reject**, displayed alongside a SHA-256 integrity hash of the full result — a tamper-evident fingerprint of each audit.
 
 ---
 
 ## Key features
 
 - **PDF ingestion** — extracts and normalises raw text with `pdfplumber`
-- **Rule-based compliance engine** — evaluates AML, sanctions (OFAC-style country lists), urgency/pressure language detection, signature verification, behavioural anomaly scoring, and exit-fraud classification
+- **Rule-based compliance engine** — evaluates AML rules, a high-risk-country watchlist (keyword-matched, not a live OFAC/SDN feed), urgency/pressure language detection, signature verification, behavioural anomaly scoring, and exit-fraud classification
 - **Markov chain default modelling** — dynamically builds a transition matrix from detected risk signals and projects default probability over a 3-step horizon
 - **Gemini 2.0 Flash integration** — sends document text + engine results to Google Gemini for an expert-level risk narrative covering Basel III/IV, MiFID II, PSD2, and ESG greenwashing risk
-- **Blockchain audit trail** — every result is SHA-256 hashed and anchored to Silent Data's Applied Blockchain L2
-- **Dark fintech UI** — custom CSS design system (tokens, shell, hero, forms, results, blockchain layers) with animated video background and staggered card animations, all within Streamlit
+- **Tamper-evident result hash** — every result is SHA-256 hashed so any change to the verdict is detectable. On-chain anchoring to Silent Data (Applied Blockchain L2) is the intended next step — not yet implemented; the current build computes the hash locally
+- **Dark fintech UI** — custom CSS design system (tokens, shell, hero, forms, results, verification panel) with animated video background and staggered card animations, all within Streamlit
 
 ---
 
@@ -36,7 +36,7 @@ The final verdict is one of three decisions: **Approve**, **Manual Review**, or 
 - **Python** — clean module separation, type-annotated functions, compiled regex patterns, Markov matrix maths
 - **Streamlit** — custom component architecture, raw HTML/CSS injection, multi-column layout, dynamic state management
 - **LLM integration** — structured prompt engineering with Google Gemini (`google-generativeai`), context window management, fallback handling
-- **Financial domain knowledge** — AML/KYC rule logic, sanctions screening heuristics, Basel III/IV and MiFID II regulatory framing, exit-fraud detection patterns
+- **Financial domain knowledge** — AML/KYC rule logic, high-risk-country screening heuristics, Basel III/IV and MiFID II regulatory framing, exit-fraud detection patterns
 - **Probabilistic modelling** — Markov chain state machine with dynamically weighted transition matrices
 - **UI/UX** — design token system, CSS custom properties, staggered animations, fintech-grade dark theme
 - **System design** — layered architecture (ingestion → rule engine → AI analyst → verification), clean public API surface on the compliance engine
@@ -51,7 +51,7 @@ The final verdict is one of three decisions: **Approve**, **Manual Review**, or 
 | **Frontend** | Streamlit + custom CSS/JS |
 | **AI** | Google Gemini 2.0 Flash (`google-generativeai`) |
 | **PDF parsing** | pdfplumber |
-| **Verification** | SHA-256 / Silent Data Blockchain L2 |
+| **Verification** | SHA-256 result hashing (on-chain anchoring planned, not yet implemented) |
 
 ---
 
@@ -105,7 +105,7 @@ Built by three developers during the **Silent Data Hackathon**:
 The compliance engine and AI analyst prompt are scoped to:
 
 - Anti-Money Laundering (AML) & Know Your Customer (KYC)
-- Sanctions screening (OFAC-aligned high-risk country lists)
+- High-risk country flagging (built-in keyword watchlist; not a live OFAC/SDN feed)
 - Basel III / Basel IV capital and risk frameworks
 - MiFID II (Markets in Financial Instruments Directive)
 - PSD2 (Payment Services Directive)
