@@ -1,112 +1,58 @@
-# AI Banking Compliance Auditor
-<img width="1920" height="3517" alt="screencapture-localhost-8501-2026-04-23-00_26_40" src="https://github.com/user-attachments/assets/9067b182-157f-487d-a96a-33e5ac50d758" />
-An intelligent, real-time compliance analysis platform built for the **Silent Data Hackathon**. Upload any banking document or transaction report and receive an instant, AI-powered risk verdict — powered by a custom rule engine, Markov chain credit modelling, and Google Gemini.
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9067b182-157f-487d-a96a-33e5ac50d758" width="640" alt="AI Banking Compliance Auditor">
+</p>
 
-> **Hackathon project** — built collaboratively by a team of three developers under time pressure and shipped end-to-end in a single event.
+<h1 align="center">AI Banking Compliance Auditor</h1>
+<p align="center">Upload a banking document and get an AML/KYC risk verdict from a rule engine, a Markov credit model, and Gemini.</p>
 
----
+<p align="center">
+  <img src="https://img.shields.io/badge/Python-3.10%2B-3776AB?logo=python&logoColor=white">
+  <img src="https://img.shields.io/badge/UI-Streamlit-FF4B4B?logo=streamlit&logoColor=white">
+  <img src="https://img.shields.io/badge/AI-Gemini%202.0%20Flash-4285F4?logo=google&logoColor=white">
+</p>
 
-## What it does
+A real-time compliance analysis demo built at the **Silent Data Hackathon** by a team of three
+(Sam, [ili-spec](https://github.com/ili-spec), [LBSiUK](https://github.com/LBSiUK)). Upload a PDF
+(wire-transfer memo, payment instruction, annual/sustainability report) and it returns an
+**Approve / Manual Review / Reject** verdict from three stacked layers, alongside a SHA-256 hash of
+the result as a tamper-evident fingerprint.
 
-The auditor accepts a PDF (wire transfer memo, payment instruction, annual/sustainability report) and runs it through three layers of analysis:
+## ✨ Features
+- **PDF ingestion** — extracts and normalises text with `pdfplumber`.
+- **Rule-based compliance engine** — 10 weighted AML/KYC rules (0–100 score): high-risk-country watchlist (keyword-matched, not a live OFAC/SDN feed), urgency/pressure language, signature verification, behavioural anomaly scoring, exit-fraud classification.
+- **Markov credit model** — builds a transition matrix from the detected risk signals and projects 3-step default probability across four states (GOOD → NORMAL → RISKY → DEFAULT).
+- **Gemini risk narrative** — sends document text + engine results to Gemini 2.0 Flash for an expert write-up framed against Basel III/IV, MiFID II, PSD2, and ESG greenwashing risk.
+- **Tamper-evident hash** — every result is SHA-256 hashed so any change to the verdict is detectable.
+- **Dark fintech UI** — a custom layered CSS design system (tokens / shell / hero / forms / results) with an animated video background, all inside Streamlit.
+
+## 🛠 Stack
+Python 3.10+ · Streamlit + custom CSS/JS · Google Gemini 2.0 Flash (`google-generativeai`) · pdfplumber · SHA-256 result hashing.
+
+## 🚀 Run
+```bash
+git clone https://github.com/011-sam-110/2026-Silent-Data-Hackathon-Entry
+cd 2026-Silent-Data-Hackathon-Entry
+pip install -r requirements.txt
+echo "GEMINI_API_KEY=your_key_here" > .env
+streamlit run app.py
+```
+The AI narrative activates only when a key is present; the rule engine and Markov model run without
+it. Sample PDFs (HIGH / MEDIUM / LOW risk) are in `test_data/`.
+
+## 🧠 How it works
+A layered pipeline: ingestion → rule engine → AI analyst → verification.
 
 | Layer | What it does |
 |---|---|
-| **Compliance rule engine** | Checks 10 AML/KYC/sanctions rules and computes a weighted risk score (0–100) |
-| **Markov credit model** | Estimates 3-step default probability across four credit states (GOOD → NORMAL → RISKY → DEFAULT) |
-| **Gemini AI analyst** | Generates a professional risk narrative — flags the engine may miss, plus actionable recommendations |
+| **Compliance rule engine** (`compliance_engine.py`) | 10 AML/KYC/sanctions rules → weighted 0–100 risk score |
+| **Markov credit model** (`compliance_engine.py`) | 3-step default probability over four credit states |
+| **Gemini analyst** (`ai_analyst.py`) | risk narrative, flags the rules may miss, recommendations |
 
-The final verdict is one of three decisions: **Approve**, **Manual Review**, or **Reject**, displayed alongside a SHA-256 integrity hash of the full result — a tamper-evident fingerprint of each audit.
+`app.py` wires config, assets and the Streamlit components (`components/hero.py`, `input_zone.py`,
+`results.py`); styling lives in `styles/`.
 
----
-
-## Key features
-
-- **PDF ingestion** — extracts and normalises raw text with `pdfplumber`
-- **Rule-based compliance engine** — evaluates AML rules, a high-risk-country watchlist (keyword-matched, not a live OFAC/SDN feed), urgency/pressure language detection, signature verification, behavioural anomaly scoring, and exit-fraud classification
-- **Markov chain default modelling** — dynamically builds a transition matrix from detected risk signals and projects default probability over a 3-step horizon
-- **Gemini 2.0 Flash integration** — sends document text + engine results to Google Gemini for an expert-level risk narrative covering Basel III/IV, MiFID II, PSD2, and ESG greenwashing risk
-- **Tamper-evident result hash** — every result is SHA-256 hashed so any change to the verdict is detectable. On-chain anchoring to Silent Data (Applied Blockchain L2) is the intended next step — not yet implemented; the current build computes the hash locally
-- **Dark fintech UI** — custom CSS design system (tokens, shell, hero, forms, results, verification panel) with animated video background and staggered card animations, all within Streamlit
-
----
-
-## Skills demonstrated
-
-- **Python** — clean module separation, type-annotated functions, compiled regex patterns, Markov matrix maths
-- **Streamlit** — custom component architecture, raw HTML/CSS injection, multi-column layout, dynamic state management
-- **LLM integration** — structured prompt engineering with Google Gemini (`google-generativeai`), context window management, fallback handling
-- **Financial domain knowledge** — AML/KYC rule logic, high-risk-country screening heuristics, Basel III/IV and MiFID II regulatory framing, exit-fraud detection patterns
-- **Probabilistic modelling** — Markov chain state machine with dynamically weighted transition matrices
-- **UI/UX** — design token system, CSS custom properties, staggered animations, fintech-grade dark theme
-- **System design** — layered architecture (ingestion → rule engine → AI analyst → verification), clean public API surface on the compliance engine
-
----
-
-## Tech stack
-
-| | |
-|---|---|
-| **Language** | Python 3.10+ |
-| **Frontend** | Streamlit + custom CSS/JS |
-| **AI** | Google Gemini 2.0 Flash (`google-generativeai`) |
-| **PDF parsing** | pdfplumber |
-| **Verification** | SHA-256 result hashing (on-chain anchoring planned, not yet implemented) |
-
----
-
-## Getting started
-
-```bash
-git clone https://github.com/011-sam-110/collab_silent_data
-cd collab_silent_data
-
-pip install -r requirements.txt
-
-# Add your Gemini API key
-echo "GEMINI_API_KEY=your_key_here" > .env
-
-streamlit run app.py
-```
-
-The AI analysis section activates only when a key is present. The rule engine and Markov model run without it.
-
----
-
-## Project structure
-
-```
-├── app.py                  # Entry point — wires config, assets, and components
-├── compliance_engine.py    # Rule engine + Markov chain credit model
-├── ai_analyst.py           # Gemini integration and prompt engineering
-├── config.py               # Constants, page config, decision config
-├── helpers.py              # CSS/JS loaders, PDF text extraction
-├── components/
-│   ├── hero.py             # Hero banner
-│   ├── input_zone.py       # File upload, framework selector, client profile
-│   └── results.py          # Full results render — metrics, rules table, AI output, blockchain footer
-└── styles/                 # Layered CSS design system
-```
-
----
-
-## Team
-
-Built by three developers during the **Silent Data Hackathon**:
-
-- **[011-sam-110](https://github.com/011-sam-110)** (Sam)
-- **[ili-spec](https://github.com/ili-spec)**
-- **[LBSiUK](https://github.com/LBSiUK)**
-
----
-
-## Regulatory coverage
-
-The compliance engine and AI analyst prompt are scoped to:
-
-- Anti-Money Laundering (AML) & Know Your Customer (KYC)
-- High-risk country flagging (built-in keyword watchlist; not a live OFAC/SDN feed)
-- Basel III / Basel IV capital and risk frameworks
-- MiFID II (Markets in Financial Instruments Directive)
-- PSD2 (Payment Services Directive)
-- ESG disclosure integrity and greenwashing risk
+## 🗺 Roadmap
+Working hackathon build; runs locally.
+- [ ] On-chain anchoring of the result hash to Silent Data (Applied Blockchain L2) — designed for, not yet implemented; the current build hashes locally
+- Known limitation: high-risk-country screening is a built-in keyword watchlist, not a live OFAC/SDN feed
+- Known limitation: a hackathon demo for screening assistance, not a certified compliance system
